@@ -1,174 +1,69 @@
 /* ==========================================================================
-   1. VARIÁVEIS DE AMBIENTE E PALETA DE CORES (:root)
+   1. BANCO DE DADOS SIMULADO (Simula dados vindos do campo/produtor)
    ========================================================================== */
-:root {
-    /* Cores Principais - Agro & Sustentabilidade (Alto Contraste) */
-    --cor-primaria: #1b4332;       /* Verde Floresta Profundo (Confiança e Natureza) */
-    --cor-secundaria: #f4f1de;     /* Creme/Terra Suave (Fundo confortável para os olhos) */
-    --cor-destaque: #e07a5f;       /* Terracota Vibrante (Contraste alto para Botões/Ações) */
+const bancoDeDadosAgro = {
+    "101": {
+        produto: "Tomate Cereja Orgânico",
+        produtor: "Sítio Primavera - Família Silva",
+        localizacao: "Castro - Paraná",
+        sustentabilidade: "Uso de biofertilizantes, zero agrotóxicos e irrigação por gotejamento (economia de 40% de água).",
+        pegadaCarbono: "Baixa (Distribuição regionalizada)"
+    },
+    "102": {
+        produto: "Alface Crespa Hidropônica",
+        produtor: "Chácara Verde Vida",
+        localizacao: "São José dos Pinhais - Paraná",
+        sustentabilidade: "Cultivo protegido com energia solar e reutilização total da água do sistema nutricional.",
+        pegadaCarbono: "Neutro (Compensado via plantio de árvores nativas)"
+    },
+    "103": {
+        produto: "Mel Silvestre Silvestre",
+        produtor: "Apicultura Florescer",
+        localizacao: "Prudentópolis - Paraná",
+        sustentabilidade: "Preservação de mata nativa para pasto apícola e proteção de polinizadores locais.",
+        pegadaCarbono: "Negativa (Fixação de carbono pela manutenção da floresta)"
+    }
+};
+
+/* ==========================================================================
+   2. CAPTURA DOS ELEMENTOS DA INTERFACE (DOM)
+   ========================================================================== */
+const botaoRastrear = document.querySelector("#botao-rastrear");
+const inputCodigo = document.querySelector("#codigo-lote");
+const painelResultado = document.querySelector("#painel-resultado");
+
+/* ==========================================================================
+   3. FUNÇÃO PRINCIPAL DE PROCESSAMENTO E VALIDAÇÃO
+   ========================================================================== */
+function processarRastreio() {
+    // Captura o valor digitado e remove espaços extras
+    const codigoDigitado = inputCodigo.value.trim();
+
+    /* --- VALIDAÇÃO ESTRITA --- */
     
-    /* Cores de Apoio */
-    --cor-texto: #2b2d42;          /* Grafite Escuro (Excelente legibilidade sobre o creme) */
-    --cor-branco: #ffffff;         /* Branco Puro para contrastar no cabeçalho */
-    --cor-erro: #d90429;           /* Vermelho Alerta para validações do JavaScript */
+    // Regra 1: Verifica se o campo está vazio
+    if (codigoDigitado === "") {
+        exibirErro("Por favor, insira o código do lote para realizar a investigação.");
+        return; // Interrompe a execução
+    }
+
+    // Converte para número para realizar validações matemáticas
+    const codigoNumerico = Number(codigoDigitado);
+
+    // Regra 2: Verifica se o número é negativo
+    if (codigoNumerico < 0) {
+        exibirErro("Código inválido! Os lotes de rastreio são identificados apenas por números positivos.");
+        return;
+    }
+
+    // Regra 3: Verifica se o código existe no nosso banco de dados do Agro
+    if (!bancoDeDadosAgro[codigoDigitado]) {
+        exibirErro(`O lote "${codigoDigitado}" não foi encontrado. Verifique o número no rótulo e tente novamente (Ex: 101, 102, 103).`);
+        return;
+    }
+
+    /* --- RENDERIZAÇÃO DO SUCESSO (DADOS VÁLIDOS) --- */
+    const loteEncontrado = bancoDeDadosAgro[codigoDigitado];
     
-    /* Tipografia e Espaçamento */
-    --fonte-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --borda-raio: 8px;             /* Arredondamento moderno para elementos da interface */
-}
-
-/* ==========================================================================
-   2. RESET GLOBAL (*) - Consistência entre Navegadores
-   ========================================================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; /* Garante que padding e border não quebrem a largura */
-}
-
-/* ==========================================================================
-   3. ESTILIZAÇÃO E TIPOGRAFIA DA ESTRUTURA
-   ========================================================================== */
-body {
-    font-family: var(--fonte-principal);
-    background-color: var(--cor-secundaria);
-    color: var(--cor-texto);
-    line-height: 1.6; /* Espaçamento entre linhas confortável para leitura */
-    padding: 0;
-}
-
-/* Cabeçalho */
-header {
-    background-color: var(--cor-primaria);
-    color: var(--cor-branco);
-    text-align: center;
-    padding: 40px 20px;
-}
-
-header h1 {
-    font-size: 2.2rem;
-    margin-bottom: 10px;
-    letter-spacing: 0.5px;
-}
-
-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* Área de Conteúdo Principal */
-main {
-    max-width: 800px; /* Limita a largura para a leitura não ficar cansativa */
-    margin: 40px auto; /* Centraliza a página na tela */
-    padding: 0 20px;
-}
-
-/* Seções */
-section {
-    background-color: var(--cor-branco);
-    padding: 30px;
-    border-radius: var(--borda-raio);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave profissional */
-    margin-bottom: 30px;
-}
-
-section h2 {
-    color: var(--cor-primaria);
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-    border-left: 5px solid var(--cor-primaria); /* Detalhe visual elegante na esquerda */
-    padding-left: 10px;
-}
-
-/* ==========================================================================
-   4. COMPONENTES DE INTERAÇÃO (Formulário e Inputs)
-   ========================================================================== */
-form {
-    display: block;
-    margin-top: 20px;
-}
-
-form label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-form input {
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
-    border: 2px solid #ccc;
-    border-radius: var(--borda-raio);
-    margin-bottom: 15px;
-    transition: border-color 0.3s ease;
-}
-
-/* Feedback visual de foco para o usuário */
-form input:focus {
-    border-color: var(--cor-primaria);
-    outline: none;
-}
-
-/* Botão de Ação Principal */
-button {
-    width: 100%;
-    background-color: var(--cor-destaque);
-    color: var(--cor-branco);
-    border: none;
-    padding: 14px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: var(--borda-raio);
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-}
-
-/* Efeitos de Hover e Active para melhor UX */
-button:hover {
-    background-color: #c9644b; /* Tom ligeiramente mais escuro no hover */
-}
-
-button:active {
-    transform: scale(0.98); /* Efeito de clique físico */
-}
-
-/* Painel onde os dados ou erros aparecerão */
-#painel-resultado {
-    margin-top: 25px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: var(--borda-raio);
-    border: 1px dashed #ccc;
-}
-
-.mensagem-inicial {
-    font-style: italic;
-    color: #6c757d;
-    text-align: center;
-}
-
-/* Classes utilitárias que o JavaScript usará para estilizar os retornos */
-.erro-card {
-    color: var(--cor-erro);
-    font-weight: bold;
-    border-left: 4px solid var(--cor-erro);
-    padding-left: 10px;
-}
-
-.sucesso-card h3 {
-    color: var(--cor-primaria);
-    margin-bottom: 8px;
-}
-
-/* ==========================================================================
-   5. RODAPÉ
-   ========================================================================== */
-footer {
-    text-align: center;
-    padding: 30px 20px;
-    font-size: 0.9rem;
-    color: #666;
-    background-color: #e9e6df; /* Tom terra ligeiramente mais escuro que o fundo */
-    margin-top: 60px;
-}
+    // Injeta o HTML diretamente na página de forma elegante, usando as classes do CSS
+    painelResultado.innerHTML = `
