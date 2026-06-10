@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do Campo à Mesa - Rastreabilidade Sustentável</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <header>
+        <h1>Do Campo à Mesa</h1>
+        <p>Conectando a cidade ao ecossistema do agro sustentável</p>
+    </header>
+
+    <main>
+        
+        <section id="introducao">
+            <h2>Transparência e Sustentabilidade</h2>
+            <p>
+                Você sabia que cada alimento tem uma história? Use a nossa ferramenta interativa 
+                para rastrear a origem do seu produto, conhecer o produtor rural e verificar as 
+                práticas ambientais aplicadas no campo.
+            </p>
+        </section>
+
+        <section id="rastreador">
+            <h2>Rastrear Lote de Alimento</h2>
+            <p>Digite o código numérico do lote (ex: 101, 102, 103) para investigar a jornada do produto:</p>
+            
+            <form id="formulario-rastreio" onsubmit="return false;">
+                <label for="codigo-lote">Código do Lote:</label>
+                <input 
+                    type="number" 
+                    id="codigo-lote" 
+                    placeholder="Ex: 101" 
+                    required
+                >
+                <button type="button" id="botao-rastrear">Investigar Origem</button>
+            </form>
+
+            <article id="painel-resultado" aria-live="polite">
+                <p class="mensagem-inicial">Insira um código acima para iniciar a pesquisa.</p>
+            </article>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Projeto Do Campo à Mesa - Concurso Agrinho.</p>
+        <p>Desenvolvido com foco em Engenharia de Software e Sustentabilidade.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
